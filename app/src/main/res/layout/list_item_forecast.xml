@@ -7,6 +7,6 @@
     android:layout_height="wrap_content"
     android:layout_width="wrap_content"
     android:text="Today-Sunny-88/63"
-    android:id="@+id/list_item_forecast"
+    android:id="@+id/list_item_forecast_textview"
     />
 </LinearLayout>
