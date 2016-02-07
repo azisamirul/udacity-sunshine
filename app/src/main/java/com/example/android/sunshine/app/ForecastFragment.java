@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -27,6 +30,12 @@ public class ForecastFragment extends Fragment {
     ArrayAdapter<String> mForecastAdapter;
 
     public ForecastFragment() {
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -59,9 +68,24 @@ public class ForecastFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
+        menuInflater.inflate(R.menu.forecastfragment, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_refresh) {
+            FetchWeatherTask weatherTask = new FetchWeatherTask();
+            weatherTask.execute();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }
 
- class FetchWeatherTask extends AsyncTask<Void, Void, Void> {
+class FetchWeatherTask extends AsyncTask<Void, Void, Void> {
     private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
     @Override
@@ -97,23 +121,24 @@ public class ForecastFragment extends Fragment {
                 return null;
             }
             forecastJsonStr = buffer.toString();
-
+Log.v(LOG_TAG,forecastJsonStr);
         } catch (IOException e) {
             Log.e(LOG_TAG, "Error", e);
 
             return null;
-        }finally{
-            if(urlConnection!=null){
+        } finally {
+            if (urlConnection != null) {
                 urlConnection.disconnect();
             }
-            if(reader!=null){
-                try{
+            if (reader != null) {
+                try {
                     reader.close();
-                }catch(final IOException e){
-                    Log.e(LOG_TAG,"Error closing stream",e);
+                } catch (final IOException e) {
+                    Log.e(LOG_TAG, "Error closing stream", e);
                 }
             }
         }
         return null;
     }
+
 }
